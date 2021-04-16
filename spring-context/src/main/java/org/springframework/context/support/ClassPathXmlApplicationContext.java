@@ -138,6 +138,7 @@ public class ClassPathXmlApplicationContext extends AbstractXmlApplicationContex
 			String[] configLocations, boolean refresh, @Nullable ApplicationContext parent)
 			throws BeansException {
 
+		//getResourcePatternResolver() 获取Spring Source加载器用于读取Spring Bean定义资源文件
 		super(parent);
 		setConfigLocations(configLocations);
 		if (refresh) {

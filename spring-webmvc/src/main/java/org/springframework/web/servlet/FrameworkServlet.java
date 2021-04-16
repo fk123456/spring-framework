@@ -575,6 +575,7 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 						// the root application context (if any; may be null) as the parent
 						cwac.setParent(rootContext);
 					}
+					//初始化Spring IOC的各个容器，调用refresh方法
 					configureAndRefreshWebApplicationContext(cwac);
 				}
 			}
@@ -596,6 +597,7 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 			// support or the context injected at construction time had already been
 			// refreshed -> trigger initial onRefresh manually here.
 			synchronized (this.onRefreshMonitor) {
+				//这个是refresh的回掉方法、初始化Spring MVC的九大组件
 				onRefresh(wac);
 			}
 		}
@@ -687,6 +689,7 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 		wac.setServletContext(getServletContext());
 		wac.setServletConfig(getServletConfig());
 		wac.setNamespace(getNamespace());
+		//这里初始化 refreshEventReceived
 		wac.addApplicationListener(new SourceFilteringListener(wac, new ContextRefreshListener()));
 
 		// The wac environment's #initPropertySources will be called in any case when the context

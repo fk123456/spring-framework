@@ -93,6 +93,7 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 	@Override
 	public void registerBeanDefinitions(Document doc, XmlReaderContext readerContext) {
 		this.readerContext = readerContext;
+		//根据Spring的DTD对bean的定义规则解析Bean的Document对象
 		doRegisterBeanDefinitions(doc.getDocumentElement());
 	}
 
@@ -144,9 +145,11 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 				}
 			}
 		}
-
+		//在解析bean定义之前，进行自定义解析，增强解析过程的可扩展性
 		preProcessXml(root);
+		//从Document的根元素开始进行bean定义的Document对象
 		parseBeanDefinitions(root, this.delegate);
+		//在解析bean定义之后，进行自定义解析，增强解析过程的可扩展性
 		postProcessXml(root);
 
 		this.delegate = parent;
@@ -303,11 +306,13 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 	 * and registering it with the registry.
 	 */
 	protected void processBeanDefinition(Element ele, BeanDefinitionParserDelegate delegate) {
+		//解析Document的xml
 		BeanDefinitionHolder bdHolder = delegate.parseBeanDefinitionElement(ele);
 		if (bdHolder != null) {
 			bdHolder = delegate.decorateBeanDefinitionIfRequired(ele, bdHolder);
 			try {
 				// Register the final decorated instance.
+				//这是Bean定义向IOC容器注入的接口
 				BeanDefinitionReaderUtils.registerBeanDefinition(bdHolder, getReaderContext().getRegistry());
 			}
 			catch (BeanDefinitionStoreException ex) {

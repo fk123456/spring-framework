@@ -37,6 +37,10 @@ import org.springframework.lang.Nullable;
  * @since 1.1
  * @see org.springframework.core.io.Resource
  */
+
+/**
+ * 读取、解析配置文件（xml）信息
+ */
 public interface BeanDefinitionReader {
 
 	/**
