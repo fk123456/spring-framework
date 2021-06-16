@@ -124,6 +124,8 @@ public abstract class AbstractXmlApplicationContext extends AbstractRefreshableC
 		if (configResources != null) {
 			reader.loadBeanDefinitions(configResources);
 		}
+		//这一步获取的localtions是在ClassPathXmlApplicationContext里设置的
+		//setConfigLocations(configLocations);
 		String[] configLocations = getConfigLocations();
 		if (configLocations != null) {
 			reader.loadBeanDefinitions(configLocations);

@@ -36,3 +36,6 @@ Follow [@SpringCentral](https://twitter.com/springcentral), [@SpringFramework](h
 ## License
 
 The Spring Framework is released under version 2.0 of the [Apache License](https://www.apache.org/licenses/LICENSE-2.0).
+
+token
+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

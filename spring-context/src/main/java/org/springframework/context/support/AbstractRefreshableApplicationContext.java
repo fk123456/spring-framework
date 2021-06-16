@@ -132,6 +132,7 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 			customizeBeanFactory(beanFactory);
 			//调用载入bean的方法，又是一个委派模式
 			loadBeanDefinitions(beanFactory);
+			//放入到 DefaultListableBeanFactory这个类中
 			this.beanFactory = beanFactory;
 		}
 		catch (IOException ex) {

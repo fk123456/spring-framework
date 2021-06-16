@@ -55,8 +55,10 @@ import org.springframework.util.Assert;
  */
 public class AnnotationConfigApplicationContext extends GenericApplicationContext implements AnnotationConfigRegistry {
 
+	//基于注解的beanDefinition读取器
 	private final AnnotatedBeanDefinitionReader reader;
 
+	//保存一个扫描路径的BeanDefinition扫描器
 	private final ClassPathBeanDefinitionScanner scanner;
 
 
@@ -66,8 +68,10 @@ public class AnnotationConfigApplicationContext extends GenericApplicationContex
 	 */
 	public AnnotationConfigApplicationContext() {
 		StartupStep createAnnotatedBeanDefReader = this.getApplicationStartup().start("spring.context.annotated-bean-reader.create");
+		//读取器
 		this.reader = new AnnotatedBeanDefinitionReader(this);
 		createAnnotatedBeanDefReader.end();
+		//扫描器
 		this.scanner = new ClassPathBeanDefinitionScanner(this);
 	}
 
@@ -87,7 +91,9 @@ public class AnnotationConfigApplicationContext extends GenericApplicationContex
 	 * @param componentClasses one or more component classes &mdash; for example,
 	 * {@link Configuration @Configuration} classes
 	 */
+	//最常用的构造方法，通过将涉及到的配置类传递给该方法。以实现相应配置类中的Bean自动注册到容器中
 	public AnnotationConfigApplicationContext(Class<?>... componentClasses) {
+		//调用无参构造方法
 		this();
 		register(componentClasses);
 		refresh();
@@ -99,6 +105,7 @@ public class AnnotationConfigApplicationContext extends GenericApplicationContex
 	 * and automatically refreshing the context.
 	 * @param basePackages the packages to scan for component classes
 	 */
+	//扫描给定的包以及子包，以实现注入IOC容器
 	public AnnotationConfigApplicationContext(String... basePackages) {
 		this();
 		scan(basePackages);
@@ -152,13 +159,8 @@ public class AnnotationConfigApplicationContext extends GenericApplicationContex
 	//---------------------------------------------------------------------
 
 	/**
-	 * Register one or more component classes to be processed.
-	 * <p>Note that {@link #refresh()} must be called in order for the context
-	 * to fully process the new classes.
-	 * @param componentClasses one or more component classes &mdash; for example,
-	 * {@link Configuration @Configuration} classes
-	 * @see #scan(String...)
-	 * @see #refresh()
+	 * 为容器注册一个要被处理的注解bean
+	 * 在refresh方法内部被调用
 	 */
 	@Override
 	public void register(Class<?>... componentClasses) {

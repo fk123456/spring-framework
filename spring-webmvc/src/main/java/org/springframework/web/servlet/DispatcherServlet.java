@@ -488,19 +488,25 @@ public class DispatcherServlet extends FrameworkServlet {
 		initStrategies(context);
 	}
 
-	/**
-	 * Initialize the strategy objects that this servlet uses.
-	 * <p>May be overridden in subclasses in order to initialize further strategy objects.
-	 */
+	//SpringMvc初始化策略
 	protected void initStrategies(ApplicationContext context) {
+		//处理上传文件
 		initMultipartResolver(context);
+		//国际化支持
 		initLocaleResolver(context);
+		//主题切换（样式）
 		initThemeResolver(context);
+		//负责实际的请求（方法-请求）
 		initHandlerMappings(context);
+		//适配request、response
 		initHandlerAdapters(context);
+		//处理handler异常出现后渲染的规则
 		initHandlerExceptionResolvers(context);
+		//请求没有设置view、viewName，则采用该方法去解析
 		initRequestToViewNameTranslator(context);
+		//视图解析器
 		initViewResolvers(context);
+		//管理redirect重定向获取参数（闪存）
 		initFlashMapManager(context);
 	}
 
@@ -583,6 +589,7 @@ public class DispatcherServlet extends FrameworkServlet {
 	 * <p>If no HandlerMapping beans are defined in the BeanFactory for this namespace,
 	 * we default to BeanNameUrlHandlerMapping.
 	 */
+	//如果没有定义HandlerMapping在BeanFactory里，则采用默认的映射规则BeanNameUrlHandlerMapping extends ApplicationObjectSupport setApplicationContext()方法
 	private void initHandlerMappings(ApplicationContext context) {
 		this.handlerMappings = null;
 
@@ -592,7 +599,7 @@ public class DispatcherServlet extends FrameworkServlet {
 					BeanFactoryUtils.beansOfTypeIncludingAncestors(context, HandlerMapping.class, true, false);
 			if (!matchingBeans.isEmpty()) {
 				this.handlerMappings = new ArrayList<>(matchingBeans.values());
-				// We keep HandlerMappings in sorted order.
+				//转换为list
 				AnnotationAwareOrderComparator.sort(this.handlerMappings);
 			}
 		}
@@ -914,11 +921,7 @@ public class DispatcherServlet extends FrameworkServlet {
 		return context.getAutowireCapableBeanFactory().createBean(clazz);
 	}
 
-
-	/**
-	 * Exposes the DispatcherServlet-specific request attributes and delegates to {@link #doDispatch}
-	 * for the actual dispatching.
-	 */
+	//SpringMvc的调用阶段，dispatch()
 	@Override
 	protected void doService(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		logRequest(request);
@@ -959,6 +962,7 @@ public class DispatcherServlet extends FrameworkServlet {
 		}
 
 		try {
+			//调用方法
 			doDispatch(request, response);
 		}
 		finally {
@@ -1032,14 +1036,15 @@ public class DispatcherServlet extends FrameworkServlet {
 				processedRequest = checkMultipart(request);
 				multipartRequestParsed = (processedRequest != request);
 
-				// Determine handler for the current request.
+				//决定哪个请求对应当前的request
 				mappedHandler = getHandler(processedRequest);
 				if (mappedHandler == null) {
+					//没有则返回404
 					noHandlerFound(processedRequest, response);
 					return;
 				}
 
-				// Determine handler adapter for the current request.
+				// 获取request处理器的适配器
 				HandlerAdapter ha = getHandlerAdapter(mappedHandler.getHandler());
 
 				// Process last-modified header, if supported by the handler.
@@ -1051,19 +1056,20 @@ public class DispatcherServlet extends FrameworkServlet {
 						return;
 					}
 				}
-
+				//前置拦截器
 				if (!mappedHandler.applyPreHandle(processedRequest, response)) {
 					return;
 				}
 
-				// Actually invoke the handler.
+				// 真正的处理 调用 AbstractHandlerMethodAdapter
 				mv = ha.handle(processedRequest, response, mappedHandler.getHandler());
 
 				if (asyncManager.isConcurrentHandlingStarted()) {
 					return;
 				}
-
+				//视图对象处理
 				applyDefaultViewName(processedRequest, mv);
+				//后置拦截器
 				mappedHandler.applyPostHandle(processedRequest, response, mv);
 			}
 			catch (Exception ex) {
@@ -1074,6 +1080,7 @@ public class DispatcherServlet extends FrameworkServlet {
 				// making them available for @ExceptionHandler methods and other scenarios.
 				dispatchException = new NestedServletException("Handler dispatch failed", err);
 			}
+			//转换为可以被response输出的结果 render()方法
 			processDispatchResult(processedRequest, response, mappedHandler, mv, dispatchException);
 		}
 		catch (Exception ex) {
@@ -1135,6 +1142,7 @@ public class DispatcherServlet extends FrameworkServlet {
 
 		// Did the handler return a view to render?
 		if (mv != null && !mv.wasCleared()) {
+			//渲染方法
 			render(mv, request, response);
 			if (errorView) {
 				WebUtils.clearErrorRequestAttributes(request);
